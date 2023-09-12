@@ -121,7 +121,9 @@ def _track_user():
         st.session_state.user_tracked = True
         counts["total_pageviews"] += 1
         counts["per_day"]["pageviews"][-1] += 1
-        st.write("Tracked new user")
+        st.write("Tracked new user":)
+        st.write(counts["total_pageviews"])
+        
 
 # Run the Streamlit app and track analytics
 if __name__ == "__main__":
