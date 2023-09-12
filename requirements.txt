@@ -1,5 +1,5 @@
 streamlit
-streamlit_analytics
+streamlit-analytics
 altair
 pandas
 datetime
