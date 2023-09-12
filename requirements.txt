@@ -1,5 +1,6 @@
 streamlit
 streamlit-analytics
+streamlit_lottie
 altair
 pandas
 datetime
