@@ -6,4 +6,4 @@ pandas
 datetime
 requests
 plotly
-calendar
+
