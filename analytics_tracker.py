@@ -159,11 +159,6 @@ def user_tracking_chart(counts):
     )
 
     return (pageviews_line + script_runs_line)
-# Show user tracking chart
-st.header("User Tracking Chart")
-chart = user_tracking_chart(counts)
-st.altair_chart(chart, use_container_width=True)
-        
 
 # Run the Streamlit app and track analytics
 if __name__ == "__main__":
@@ -420,55 +415,8 @@ if __name__ == "__main__":
             
         st.write("##")
         
-        # Function to explain loan changes
-        results_container = st.container()
-        def explain_loan_changes(new_extra_payment, new_interest_rate, new_loan_term_difference):
-            explanations = []
-        
-            if new_extra_payment > 0:
-                explanations.append(
-                    "💡: When you make extra payments towards your loan principal, it has a positive effect on your loan. It reduces the outstanding balance faster, potentially shortening the loan term and saving you money on interest payments."
-                )
-            elif new_extra_payment < 0:
-                explanations.append(
-                    "💡: When you reduce your extra payments compared to the original loan terms, you are paying less money upfront, which typically leads to a longer loan term or higher overall interest payments. This is favorable in the short term but may result in higher overall costs over the life of the loan."
-                )
-        
-            if new_interest_rate < interest_rate:
-                explanations.append(
-                    "💡: When you secure a loan with a lower interest rate than the original loan, it has a positive impact. A lower interest rate means you'll pay less in interest over the life of the loan, resulting in lower overall costs."
-                )
-            elif new_interest_rate > interest_rate:
-                explanations.append(
-                    "💡: When the interest rate on a loan increases compared to the original terms, it means you will pay more in interest over the life of the loan. This is unfavorable as it increases the cost of borrowing."
-                )
-        
-            if new_loan_term_difference < 0:
-                explanations.append(
-                    "💡: Having a shorter loan term compared to the original loan is a positive factor. A shorter term typically means higher monthly payments, but it can save you a significant amount of money in interest over the life of the loan. It also allows you to pay off the loan more quickly, reducing financial stress and risk."
-                )
-            elif new_loan_term_difference > 0:
-                explanations.append(
-                    "💡: When borrowers choose to extend the loan term beyond the original terms, it typically results in lower monthly payments but may also lead to higher overall interest payments. Extending the loan term can make it more affordable in the short term but can increase the total cost of the loan over time."
-                )
-        
-            if not explanations:
-                explanations.append(
-                    "No changes in the loan variables were made.\n"
-                    "The original loan terms remain unchanged."
-                )
-        
-            return "\n\n".join(explanations)
-        
-        # Display explanations
-        explanation = explain_loan_changes(new_extra_payment, new_interest_rate, new_loan_term_difference)
-        with results_container:
-            st.subheader("Impact of Changes")
-            st.write(explanation)
-            
-        st.markdown("---") 
-        with st.expander(
-            "**Disclaimer:**", expanded=True
-        ):
-            st.write(""" Please note that by default this calculator uses the prime interest rate for bond payment calculations. This is purely for convenience and not an indication of the interest rate that might be offered to you by a bank. This calculator is intended to provide estimates based on the indicated amounts and rates. Whilst we make every effort to ensure the accuracy of these calculations, we cannot be held liable for inaccuracies and do not accept liability for any damages arising from the use of this calculator.
-                     """)  
+
+# Show user tracking chart
+st.header("User Tracking Chart")
+chart = user_tracking_chart(counts)
+st.altair_chart(chart, use_container_width=True)
