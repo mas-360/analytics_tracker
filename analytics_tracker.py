@@ -4,7 +4,6 @@ from datetime import datetime
 import altair as alt
 import pandas as pd
 
-from . import utils
 
 # Initialize Streamlit Analytics
 analytics = streamlit_analytics.Analytics()
