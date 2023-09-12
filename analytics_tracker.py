@@ -5,7 +5,7 @@ import streamlit_analytics
 streamlit_analytics.init()
 
 # Track user interactions with the app
-st.analytics(name="My App")
+st.analytics(name="homeloancalculator.py")
 
 # Display a bar chart of the tracking results
 st.analytics_plot()
