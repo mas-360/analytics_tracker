@@ -104,6 +104,25 @@ def show_results(counts, reset_callback, unsafe_password=None):
     )
     st.write(counts["widgets"])
 
+def _track_user():
+    """Track individual pageviews by storing user id to session state."""
+    today = str(datetime.date.today())
+    if counts["per_day"]["days"][-1] != today:
+        # TODO: Insert 0 for all days between today and last entry.
+        counts["per_day"]["days"].append(today)
+        counts["per_day"]["pageviews"].append(0)
+        counts["per_day"]["script_runs"].append(0)
+    counts["total_script_runs"] += 1
+    counts["per_day"]["script_runs"][-1] += 1
+    now = datetime.datetime.now()
+    counts["total_time_seconds"] += (now - st.session_state.last_time).total_seconds()
+    st.session_state.last_time = now
+    if not st.session_state.user_tracked:
+        st.session_state.user_tracked = True
+        counts["total_pageviews"] += 1
+        counts["per_day"]["pageviews"][-1] += 1
+        print("Tracked new user")
+
 # Run the Streamlit app and track analytics
 if __name__ == "__main__":
     # Track analytics for the entire Streamlit app
