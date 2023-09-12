@@ -1,11 +1,103 @@
 import streamlit as st
 import streamlit_analytics
+from datetime import datetime
+import altair as alt
+import pandas as pd
 
-# Initialize the streamlit-analytics tracker
-streamlit_analytics.init()
+from . import utils
 
-# Track user interactions with the app
-st.analytics(name="homeloancalculator.py")
+def show_results(counts, reset_callback, unsafe_password=None):
+    """Show analytics results in streamlit, asking for password if given."""
 
-# Display a bar chart of the tracking results
-st.analytics_plot()
+    # Show header.
+    st.title("Analytics Dashboard")
+
+    # Ask for password if one was given.
+    show = True
+    if unsafe_password is not None:
+        password_input = st.text_input(
+            "Enter password to show results", type="password"
+        )
+        if password_input != unsafe_password:
+            show = False
+            if len(password_input) > 0:
+                st.write("Nope, that's not correct ☝️")
+
+# Show traffic.
+        st.header("Traffic")
+        st.write(f"since {counts['start_time']}")
+        col1, col2, col3 = st.columns(3)
+        col1.metric(
+            "Pageviews",
+            counts["total_pageviews"],
+            help="Every time a user (re-)loads the site.",
+        )
+        col2.metric(
+            "Script runs",
+            counts["total_script_runs"],
+            help="Every time Streamlit reruns upon changes or interactions.",
+        )
+        col3.metric(
+            "Time spent",
+            utils.format_seconds(counts["total_time_seconds"]),
+            help="Time from initial page load to last widget interaction, summed over all users.",
+        )
+        st.write("")
+
+        # Plot altair chart with pageviews and script runs.
+        try:
+            alt.themes.enable("streamlit")
+        except:
+            pass  # probably old Streamlit version
+        df = pd.DataFrame(counts["per_day"])
+        base = alt.Chart(df).encode(
+            x=alt.X("monthdate(days):O", axis=alt.Axis(title="", grid=True))
+        )
+        line1 = base.mark_line(point=True, stroke="#5276A7").encode(
+            alt.Y(
+                "pageviews:Q",
+                axis=alt.Axis(
+                    titleColor="#5276A7",
+                    tickColor="#5276A7",
+                    labelColor="#5276A7",
+                    format=".0f",
+                    tickMinStep=1,
+                ),
+                scale=alt.Scale(domain=(0, df["pageviews"].max() + 1)),
+            )
+        )
+        line2 = base.mark_line(point=True, stroke="#57A44C").encode(
+            alt.Y(
+                "script_runs:Q",
+                axis=alt.Axis(
+                    title="script runs",
+                    titleColor="#57A44C",
+                    tickColor="#57A44C",
+                    labelColor="#57A44C",
+                    format=".0f",
+                    tickMinStep=1,
+                ),
+            )
+        )
+        layer = (
+            alt.layer(line1, line2)
+            .resolve_scale(y="independent")
+            .configure_axis(titleFontSize=15, labelFontSize=12, titlePadding=10)
+        )
+        st.altair_chart(layer, use_container_width=True)
+
+        # Show widget interactions.
+        st.header("Widget interactions")
+        st.markdown(
+            """
+            Find out how users interacted with your app!
+            <br>
+            Numbers indicate how often a button was clicked, how often a specific text 
+            input was given, ...
+            <br>
+            <sub>Note: Numbers only increase if the state of the widget
+            changes, not every time streamlit runs the script.</sub>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.write(counts["widgets"])
