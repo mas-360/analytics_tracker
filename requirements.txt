@@ -3,3 +3,6 @@ streamlit-analytics
 altair
 pandas
 datetime
+requests
+plotly
+calendar
