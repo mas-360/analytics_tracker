@@ -159,10 +159,10 @@ def user_tracking_chart(counts):
     )
 
     return (pageviews_line + script_runs_line)
-    # Show user tracking chart
-    st.header("User Tracking Chart")
-    chart = user_tracking_chart(counts)
-    st.altair_chart(chart, use_container_width=True)
+# Show user tracking chart
+st.header("User Tracking Chart")
+chart = user_tracking_chart(counts)
+st.altair_chart(chart, use_container_width=True)
         
 
 # Run the Streamlit app and track analytics
