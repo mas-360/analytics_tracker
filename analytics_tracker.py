@@ -104,14 +104,29 @@ def show_results(counts, reset_callback, unsafe_password=None):
     )
     st.write(counts["widgets"])
 
+# Initialize or load counts data
+counts = {
+    "total_script_runs": 0,
+    "total_time_seconds": 0,
+    "total_pageviews": 0,
+    "per_day": {"days": [], "pageviews": [], "script_runs": []},
+}
+
+if "last_time" not in st.session_state:
+    st.session_state.last_time = datetime.datetime.now()
+
+if "user_tracked" not in st.session_state:
+    st.session_state.user_tracked = False
+
 def _track_user():
     """Track individual pageviews by storing user id to session state."""
     today = str(datetime.date.today())
     if counts["per_day"]["days"][-1] != today:
-        # TODO: Insert 0 for all days between today and last entry.
-        counts["per_day"]["days"].append(today)
-        counts["per_day"]["pageviews"].append(0)
-        counts["per_day"]["script_runs"].append(0)
+        # Insert 0 for all days between today and last entry.
+        while counts["per_day"]["days"][-1] != today:
+            counts["per_day"]["days"].append(today)
+            counts["per_day"]["pageviews"].append(0)
+            counts["per_day"]["script_runs"].append(0)
     counts["total_script_runs"] += 1
     counts["per_day"]["script_runs"][-1] += 1
     now = datetime.datetime.now()
@@ -121,8 +136,29 @@ def _track_user():
         st.session_state.user_tracked = True
         counts["total_pageviews"] += 1
         counts["per_day"]["pageviews"][-1] += 1
-    st.write("Tracked new user")
-    st.write(counts["total_pageviews"])
+
+# Create an Altair chart for tracking user data
+def user_tracking_chart(counts):
+    df = pd.DataFrame(counts["per_day"])
+    chart = alt.Chart(df).encode(
+        x=alt.X("days:T", title="Date"),
+        y=alt.Y("pageviews:Q", title="Pageviews"),
+        color=alt.Color("type:N", title="Metric"),
+    ).properties(
+        width=600,
+        height=400,
+        title="User Tracking Data",
+    )
+    
+    pageviews_line = chart.mark_line().encode(
+        y=alt.Y("pageviews:Q", title="Pageviews"),
+    )
+
+    script_runs_line = chart.mark_line().encode(
+        y=alt.Y("script_runs:Q", title="Script Runs"),
+    )
+
+    return (pageviews_line + script_runs_line)
         
 
 # Run the Streamlit app and track analytics
