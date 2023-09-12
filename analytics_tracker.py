@@ -113,7 +113,7 @@ counts = {
 }
 
 if "last_time" not in st.session_state:
-    st.session_state.last_time = datetime.datetime.now()
+    st.session_state.last_time = datetime.now()  # Corrected instantiation
 
 if "user_tracked" not in st.session_state:
     st.session_state.user_tracked = False
@@ -122,14 +122,14 @@ def _track_user():
     """Track individual pageviews by storing user id to session state."""
     today = str(datetime.date.today())
     if counts["per_day"]["days"][-1] != today:
-        # Insert 0 for all days between today and last entry.
+        # Insert 0 for all days between today and the last entry.
         while counts["per_day"]["days"][-1] != today:
             counts["per_day"]["days"].append(today)
             counts["per_day"]["pageviews"].append(0)
             counts["per_day"]["script_runs"].append(0)
     counts["total_script_runs"] += 1
     counts["per_day"]["script_runs"][-1] += 1
-    now = datetime.datetime.now()
+    now = datetime.now()  # Corrected instantiation
     counts["total_time_seconds"] += (now - st.session_state.last_time).total_seconds()
     st.session_state.last_time = now
     if not st.session_state.user_tracked:
@@ -159,6 +159,10 @@ def user_tracking_chart(counts):
     )
 
     return (pageviews_line + script_runs_line)
+    # Show user tracking chart
+    st.header("User Tracking Chart")
+    chart = user_tracking_chart(counts)
+    st.altair_chart(chart, use_container_width=True)
         
 
 # Run the Streamlit app and track analytics
