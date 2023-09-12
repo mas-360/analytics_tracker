@@ -5,8 +5,8 @@ import altair as alt
 import pandas as pd
 
 
-# Initialize Streamlit Analytics
-analytics = streamlit_analytics.Analytics()
+# Initialize the streamlit-analytics tracker
+streamlit_analytics.init()
 
 def show_results(counts, reset_callback, unsafe_password=None):
     """Show analytics results in Streamlit, asking for a password if given."""
